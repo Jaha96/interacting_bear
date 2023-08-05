@@ -46,6 +46,8 @@ class _AnimationScreenState extends State<AnimationScreen> {
     }
   }
 
+  bool get isHearingValue => isHearing?.value ?? false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +60,9 @@ class _AnimationScreenState extends State<AnimationScreen> {
                 )),
       floatingActionButton: FloatingActionButton(
         onPressed: _toggleHearing,
-        tooltip: isHearing!.value ? 'Pause' : 'Play',
+        tooltip: isHearingValue ? 'Pause' : 'Play',
         child: Icon(
-          isHearing!.value ? Icons.pause : Icons.play_arrow,
+          isHearingValue ? Icons.pause : Icons.play_arrow,
         ),
       ),
     );
