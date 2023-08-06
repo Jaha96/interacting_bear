@@ -51,21 +51,22 @@ class _AnimationScreenState extends State<AnimationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final isHearing = ref.watch(isHearingControllerProvider);
-        _toggleHearing(isHearing);
-        return Scaffold(
-          body: Center(
+    return Scaffold(
+      body: Consumer(
+        builder: (context, ref, _) {
+          final isHearing = ref.watch(isHearingControllerProvider);
+          print('Built animation screen');
+          _toggleHearing(isHearing);
+          return Center(
               child: riveArtboard == null
                   ? const SizedBox()
                   : Rive(
                       artboard: riveArtboard!,
                       // fit: BoxFit.cover,
-                    )),
-          floatingActionButton: const STTWidget(),
-        );
-      },
+                    ));
+        },
+      ),
+      floatingActionButton: const STTWidget(),
     );
   }
 }

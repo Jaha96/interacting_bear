@@ -65,6 +65,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print('Built speech to text widget');
     return FloatingActionButton(
       onPressed:
           _speechToText.isNotListening ? _startListening : _stopListening,
