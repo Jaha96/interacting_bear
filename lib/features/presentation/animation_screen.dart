@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:interacting_tom/features/presentation/speech_to_text.dart';
 import 'package:rive/rive.dart';
 
 class AnimationScreen extends StatefulWidget {
@@ -56,15 +57,9 @@ class _AnimationScreenState extends State<AnimationScreen> {
               ? const SizedBox()
               : Rive(
                   artboard: riveArtboard!,
-                  fit: BoxFit.cover,
+                  // fit: BoxFit.cover,
                 )),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _toggleHearing,
-        tooltip: isHearingValue ? 'Pause' : 'Play',
-        child: Icon(
-          isHearingValue ? Icons.pause : Icons.play_arrow,
-        ),
-      ),
+      floatingActionButton: const STTWidget(),
     );
   }
 }
