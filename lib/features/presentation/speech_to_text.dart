@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:interacting_tom/features/providers/stt_state_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-class STTWidget extends StatefulWidget {
+class STTWidget extends ConsumerStatefulWidget {
   const STTWidget({super.key});
 
   @override
-  State<STTWidget> createState() => _STTWidgetState();
+  ConsumerState<STTWidget> createState() => _STTWidgetState();
 }
 
-class _STTWidgetState extends State<STTWidget> {
+class _STTWidgetState extends ConsumerState<STTWidget> {
   final SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
   String _lastWords = '';
-  bool _isListening = false;
 
   @override
   void initState() {
@@ -23,13 +23,13 @@ class _STTWidgetState extends State<STTWidget> {
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize();
+    await _speechToText.initialize();
     setState(() {});
   }
 
   /// Each time to start a speech recognition session
   void _startListening() async {
-    _isListening = true;
+    updateIsHearing(true);
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -40,21 +40,28 @@ class _STTWidgetState extends State<STTWidget> {
   /// listen method.
   void _stopListening() async {
     await _speechToText.stop();
-    _isListening = false;
     setState(() {});
   }
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
   void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _lastWords = result.recognizedWords;
-      print('Is listening: ${_speechToText.isListening}');
-      print('Last words: $_lastWords');
-      print('Confidence: ${result.confidence}');
-
-    });
+    if (result.finalResult) {
+      updateIsHearing(false);
+      setState(() {
+        _lastWords = result.recognizedWords;
+        print('Is listening: ${_speechToText.isListening}');
+        print('Last words: $_lastWords');
+        print('Confidence: ${result.confidence}');
+      });
+    }
   }
+
+  void updateIsHearing(bool isHearing) {
+    ref.read(isHearingControllerProvider.notifier).toggleHearing(isHearing);
+  }
+
+  bool get _isListening => _speechToText.isListening;
 
   @override
   Widget build(BuildContext context) {

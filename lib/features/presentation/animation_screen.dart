@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:interacting_tom/features/presentation/speech_to_text.dart';
+import 'package:interacting_tom/features/providers/stt_state_provider.dart';
 import 'package:rive/rive.dart';
 
 class AnimationScreen extends StatefulWidget {
@@ -39,11 +41,9 @@ class _AnimationScreenState extends State<AnimationScreen> {
     );
   }
 
-  void _toggleHearing() {
+  void _toggleHearing(bool newValue) {
     if (isHearing != null) {
-      isHearing!.value = !isHearing!.value;
-    } else {
-      isHearing!.value = true;
+      isHearing!.value = newValue;
     }
   }
 
@@ -51,15 +51,21 @@ class _AnimationScreenState extends State<AnimationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: riveArtboard == null
-              ? const SizedBox()
-              : Rive(
-                  artboard: riveArtboard!,
-                  // fit: BoxFit.cover,
-                )),
-      floatingActionButton: const STTWidget(),
+    return Consumer(
+      builder: (context, ref, _) {
+        final isHearing = ref.watch(isHearingControllerProvider);
+        _toggleHearing(isHearing);
+        return Scaffold(
+          body: Center(
+              child: riveArtboard == null
+                  ? const SizedBox()
+                  : Rive(
+                      artboard: riveArtboard!,
+                      // fit: BoxFit.cover,
+                    )),
+          floatingActionButton: const STTWidget(),
+        );
+      },
     );
   }
 }
