@@ -19,6 +19,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
 
   @override
   void initState() {
+    print('animation screen init state');
     super.initState();
 
     rootBundle.load('assets/bear_character.riv').then(
@@ -32,7 +33,11 @@ class _AnimationScreenState extends State<AnimationScreen> {
             artboard.addController(controller);
             isHearing = controller.findSMI('Hear');
             wave = controller.findSMI('Wave');
-            setState(() => riveArtboard = artboard);
+            setState(
+              () {
+                riveArtboard = artboard;
+              },
+            );
           }
         } catch (e) {
           print(e);

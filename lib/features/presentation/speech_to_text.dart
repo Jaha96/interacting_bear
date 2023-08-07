@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:interacting_tom/features/providers/openai_response_controller.dart';
 import 'package:interacting_tom/features/providers/stt_state_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -45,15 +46,19 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) {
+  void _onSpeechResult(SpeechRecognitionResult result) async {
     if (result.finalResult) {
       updateIsHearing(false);
-      setState(() {
-        _lastWords = result.recognizedWords;
-        print('Is listening: ${_speechToText.isListening}');
-        print('Last words: $_lastWords');
-        print('Confidence: ${result.confidence}');
-      });
+      _lastWords = result.recognizedWords;
+      ref
+          .read(openAIResponseControllerProvider.notifier)
+          .getResponse(_lastWords);
+      // setState(() {
+      //   _lastWords = result.recognizedWords;
+
+      //   print('Last words: $_lastWords');
+      //   print('Confidence: ${result.confidence}');
+      // });
     }
   }
 
@@ -65,7 +70,8 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('Built speech to text widget');
+    final state = ref.watch(openAIResponseControllerProvider);
+    print('STATE: $state');
     return FloatingActionButton(
       onPressed:
           _speechToText.isNotListening ? _startListening : _stopListening,
