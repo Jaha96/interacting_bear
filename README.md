@@ -10,6 +10,10 @@ In my search for a more accessible solution, I consulted with my UI/UX designer 
 
 Ultimately, I decided to switch my stack to Rive for animations and Flutter for the application development. Additionally, I integrated AWS Polly for speech-to-text and text-to-speech functionality to enhance the user experience. To add an extra layer of fun and excitement, I used Chat GPT to generate interesting and random responses, making the interactions with the cute polar bear character even more engaging for kids.
 
+## Requirements
+- Flutter 3.10.4
+- Dart 3.0.3
+
 ## Getting Started
 
 To run the project, follow these steps:
@@ -19,6 +23,7 @@ To run the project, follow these steps:
 3. Navigate to the project directory in your terminal.
 4. Run `flutter pub get` to install the required dependencies.
 5. To generate Riverpod codes, run `flutter pub run build_runner watch -d`.
+6. Replace `.env.example` filename into `.env` and update your OpenAI API credentials 
 
 ## Features
 
