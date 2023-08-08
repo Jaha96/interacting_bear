@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:interacting_tom/features/presentation/text_to_speech.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
 import 'package:interacting_tom/features/providers/stt_state_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -53,6 +54,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
       ref
           .read(openAIResponseControllerProvider.notifier)
           .getResponse(_lastWords);
+      _stopListening();
       // setState(() {
       //   _lastWords = result.recognizedWords;
 
@@ -70,13 +72,13 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(openAIResponseControllerProvider);
-    print('STATE: $state');
+    print('Built STT widget');
     return FloatingActionButton(
-      onPressed:
-          _speechToText.isNotListening ? _startListening : _stopListening,
-      tooltip: _isListening ? 'Pause' : 'Play',
-      child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
-    );
+        onPressed:
+            _speechToText.isNotListening ? _startListening : _stopListening,
+        tooltip: _isListening ? 'Pause' : 'Play',
+        child: TextToSpeech(
+            child: Icon(
+                _speechToText.isNotListening ? Icons.mic_off : Icons.mic)));
   }
 }

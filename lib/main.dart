@@ -2,7 +2,7 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:interacting_tom/env/env.dart';
-import 'package:interacting_tom/features/presentation/animation_screen.dart';
+import 'package:interacting_tom/features/presentation/home_screen.dart';
 
 void main() {
   OpenAI.apiKey = Env.apiKey;
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const AnimationScreen(),
+      home: const HomeScreen(),
     );
   }
 }

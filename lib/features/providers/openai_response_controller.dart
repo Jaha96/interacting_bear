@@ -14,7 +14,7 @@ class OpenAIResponseController extends _$OpenAIResponseController {
   void getResponse(String prompt) async {
     final openAIRepository = ref.read(openAIRepostitoryProvider);
 
-    state = const AsyncLoading();
+    // state = const AsyncLoading();
     final responseValue = await AsyncValue.guard(() async {
       return openAIRepository.fetchAnswer(prompt);
     });
