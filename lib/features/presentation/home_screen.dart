@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interacting_tom/features/presentation/animation_screen.dart';
+import 'package:interacting_tom/features/presentation/flag_switch.dart';
 import 'package:interacting_tom/features/presentation/speech_to_text.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,7 +11,11 @@ class HomeScreen extends StatelessWidget {
     print('home screen built');
     return const Scaffold(
       body: AnimationScreen(),
-      floatingActionButton: STTWidget(),
+      floatingActionButton: Wrap(
+        direction: Axis.vertical,
+        spacing: 30,
+        children: [FlagSwitch(), STTWidget()],
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:interacting_tom/features/presentation/text_to_speech.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
-import 'package:interacting_tom/features/providers/stt_state_provider.dart';
+import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -31,7 +31,11 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
   /// Each time to start a speech recognition session
   void _startListening() async {
-    updateIsHearing(true);
+    if (_speechToText.isListening) {
+      print('Already listening');
+      return;
+    }
+    updateHearingAnimation(true);
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -42,6 +46,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   /// listen method.
   void _stopListening() async {
     await _speechToText.stop();
+    updateHearingAnimation(false);
     setState(() {});
   }
 
@@ -49,7 +54,6 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   /// the platform returns recognized words.
   void _onSpeechResult(SpeechRecognitionResult result) async {
     if (result.finalResult) {
-      updateIsHearing(false);
       _lastWords = result.recognizedWords;
       ref
           .read(openAIResponseControllerProvider.notifier)
@@ -64,8 +68,10 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
     }
   }
 
-  void updateIsHearing(bool isHearing) {
-    ref.read(isHearingControllerProvider.notifier).toggleHearing(isHearing);
+  void updateHearingAnimation(bool isHearing) {
+    ref
+        .read(animationStateControllerProvider.notifier)
+        .updateHearing(isHearing);
   }
 
   bool get _isListening => _speechToText.isListening;
@@ -74,8 +80,9 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   Widget build(BuildContext context) {
     print('Built STT widget');
     return FloatingActionButton(
-        onPressed:
-            _speechToText.isNotListening ? _startListening : _stopListening,
+        onPressed: () {
+          _isListening ? _stopListening() : _startListening();
+        },
         tooltip: _isListening ? 'Pause' : 'Play',
         child: TextToSpeech(
             child: Icon(

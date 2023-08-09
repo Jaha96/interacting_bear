@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
 
 class TextToSpeech extends ConsumerStatefulWidget {
@@ -60,8 +61,9 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
 
     flutterTts.setCompletionHandler(() {
       print("Complete");
+      updateTalkingAnimation(false);
       // setState(() {
-      //   
+      //
       //   ttsState = TtsState.stopped;
       // });
     });
@@ -69,11 +71,13 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     flutterTts.setCancelHandler(() {
       setState(() {
         print("Cancel");
+        updateTalkingAnimation(false);
         ttsState = TtsState.stopped;
       });
     });
 
     flutterTts.setPauseHandler(() {
+      updateTalkingAnimation(false);
       setState(() {
         print("Paused");
         ttsState = TtsState.paused;
@@ -81,6 +85,7 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     });
 
     flutterTts.setContinueHandler(() {
+      updateTalkingAnimation(false);
       setState(() {
         print("Continued");
         ttsState = TtsState.continued;
@@ -88,11 +93,18 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     });
 
     flutterTts.setErrorHandler((msg) {
+      updateTalkingAnimation(false);
       setState(() {
         print("error: $msg");
         ttsState = TtsState.stopped;
       });
     });
+  }
+
+  void updateTalkingAnimation(bool isTalking) {
+    ref
+        .read(animationStateControllerProvider.notifier)
+        .updateTalking(isTalking);
   }
 
   Future _getDefaultEngine() async {
@@ -115,6 +127,7 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     await flutterTts.setPitch(pitch);
 
     if (textToSpeak.isNotEmpty) {
+      updateTalkingAnimation(true);
       await flutterTts.speak(textToSpeak);
     }
   }
@@ -137,8 +150,6 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
         print('STATE: $next');
       }
     });
-
-    
 
     return widget.child ?? const SizedBox();
   }
