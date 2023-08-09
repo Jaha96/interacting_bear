@@ -16,6 +16,7 @@ class STTWidget extends ConsumerStatefulWidget {
 class _STTWidgetState extends ConsumerState<STTWidget> {
   final SpeechToText _speechToText = SpeechToText();
   String _lastWords = '';
+  List<LocaleName> _localeNames = [];
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   /// This has to happen only once per app
   void _initSpeech() async {
     await _speechToText.initialize();
+    _localeNames = await _speechToText.locales();
     setState(() {});
   }
 
@@ -36,8 +38,24 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
       return;
     }
     updateHearingAnimation(true);
-    await _speechToText.listen(onResult: _onSpeechResult);
+    final localeid = _getCurrentLocale();
+    if (localeid == null) {
+      await _speechToText.listen(onResult: _onSpeechResult);
+    } else {
+      await _speechToText.listen(
+          onResult: _onSpeechResult, localeId: localeid.localeId);
+    }
+
     setState(() {});
+  }
+
+  LocaleName? _getCurrentLocale() {
+    final String currentLang =
+        ref.read(animationStateControllerProvider).language;
+
+    if (_localeNames.isEmpty) return null;
+    return _localeNames
+        .firstWhere((locale) => locale.localeId.contains(currentLang));
   }
 
   /// Manually stop the active speech recognition session
@@ -79,13 +97,14 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   @override
   Widget build(BuildContext context) {
     print('Built STT widget');
+    Widget micIcon =
+        _isListening ? const Icon(Icons.mic) : const Icon(Icons.mic_off);
     return FloatingActionButton(
         onPressed: () {
+          print(_isListening);
           _isListening ? _stopListening() : _startListening();
         },
         tooltip: _isListening ? 'Pause' : 'Play',
-        child: TextToSpeech(
-            child: Icon(
-                _speechToText.isNotListening ? Icons.mic_off : Icons.mic)));
+        child: TextToSpeech(child: micIcon, key: Key(_isListening.toString())));
   }
 }
