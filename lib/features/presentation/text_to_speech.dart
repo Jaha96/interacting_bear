@@ -131,9 +131,24 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
   }
 
   Future _speak(String textToSpeak) async {
+    final String currentLang =
+        ref.read(animationStateControllerProvider).language;
+    
+    final mapCurLang = currentLang == 'en' ? 'en-US' : 'ja-JP';
+    
+    // _getLanguages().then((value) => print("languages: $value"));
+    // _getVoices().then((values) => print("voices: ${values}"));
+
+    final languages = await flutterTts.getLanguages;
+    final voices = await flutterTts.getVoices;
+    final curVoice = voices.firstWhere((i) => i['locale'].contains(mapCurLang) as bool);
+
+
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
     await flutterTts.setPitch(pitch);
+    await flutterTts.setLanguage(mapCurLang);
+    // await flutterTts.setVoice(curVoice);
 
     if (textToSpeak.isNotEmpty) {
       updateTalkingAnimation(true);
