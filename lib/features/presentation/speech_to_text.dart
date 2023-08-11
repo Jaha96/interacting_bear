@@ -5,6 +5,7 @@ import 'package:interacting_tom/features/providers/openai_response_controller.da
 import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:collection/collection.dart';
 
 class STTWidget extends ConsumerStatefulWidget {
   const STTWidget({super.key});
@@ -55,7 +56,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
 
     if (_localeNames.isEmpty) return null;
     return _localeNames
-        .firstWhere((locale) => locale.localeId.contains(currentLang));
+        .firstWhereOrNull((locale) => locale.localeId.contains(currentLang.toUpperCase()));
   }
 
   /// Manually stop the active speech recognition session
