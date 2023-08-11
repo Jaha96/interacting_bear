@@ -32,11 +32,20 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     super.initState();
     initTts();
   }
+  Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
+
+  Future<dynamic> _getEngines() async => await flutterTts.getEngines;
+
+  Future<dynamic> _getVoices() async => await flutterTts.getVoices;
 
   initTts() {
     flutterTts = FlutterTts();
 
     _setAwaitOptions();
+
+    _getEngines().then((value) => print("engines: $value"));
+    _getLanguages().then((value) => print("languages: $value"));
+    _getVoices().then((values) => print("voices: ${values}"));
 
     if (isAndroid) {
       _getDefaultEngine();
