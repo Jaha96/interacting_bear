@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:interacting_tom/features/presentation/speech_to_text.dart';
-import 'package:interacting_tom/features/providers/stt_state_provider.dart';
+import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:rive/rive.dart';
 
-class AnimationScreen extends StatefulWidget {
+class AnimationScreen extends ConsumerStatefulWidget {
   const AnimationScreen({super.key});
 
   @override
-  State<AnimationScreen> createState() => _AnimationScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _AnimationScreenState();
 }
 
-class _AnimationScreenState extends State<AnimationScreen> {
+class _AnimationScreenState extends ConsumerState<AnimationScreen> {
   Artboard? riveArtboard;
   SMIBool? isHearing;
-  SMITrigger? wave;
+  SMIBool? talk;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _AnimationScreenState extends State<AnimationScreen> {
           if (controller != null) {
             artboard.addController(controller);
             isHearing = controller.findSMI('Hear');
-            wave = controller.findSMI('Wave');
+            talk = controller.findSMI('Talk');
             setState(
               () {
                 riveArtboard = artboard;
@@ -46,32 +46,25 @@ class _AnimationScreenState extends State<AnimationScreen> {
     );
   }
 
-  void _toggleHearing(bool newValue) {
-    if (isHearing != null) {
-      isHearing!.value = newValue;
-    }
+  void _toggleAnimation(AnimationState newValue) {
+    isHearing?.value = newValue.isHearing;
+    talk?.value = newValue.isTalking;
   }
 
   bool get isHearingValue => isHearing?.value ?? false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer(
-        builder: (context, ref, _) {
-          final isHearing = ref.watch(isHearingControllerProvider);
-          print('Built animation screen');
-          _toggleHearing(isHearing);
-          return Center(
-              child: riveArtboard == null
-                  ? const SizedBox()
-                  : Rive(
-                      artboard: riveArtboard!,
-                      // fit: BoxFit.cover,
-                    ));
-        },
-      ),
-      floatingActionButton: const STTWidget(),
-    );
+    final animState = ref.watch(animationStateControllerProvider);
+    print('Built animation screen');
+    _toggleAnimation(animState);
+    return Center(
+        child: riveArtboard == null
+            ? const SizedBox()
+            : Rive(
+                artboard: riveArtboard!,
+                alignment: Alignment.bottomCenter,
+                // fit: BoxFit.cover,
+              ));
   }
 }
