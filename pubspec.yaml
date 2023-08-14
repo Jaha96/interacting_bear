@@ -46,6 +46,7 @@ dependencies:
   flutter_tts: ^3.7.0
   flag: ^7.0.0
   collection: ^1.17.1
+  just_audio: ^0.9.34
 
 dev_dependencies:
   build_runner: ^2.4.6
