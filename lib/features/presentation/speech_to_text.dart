@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:interacting_tom/features/presentation/text_to_speech.dart';
+import 'package:interacting_tom/features/presentation/text_to_speech_cloud.dart';
+import 'package:interacting_tom/features/presentation/text_to_speech_local.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
 import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -55,8 +56,8 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
         ref.read(animationStateControllerProvider).language;
 
     if (_localeNames.isEmpty) return null;
-    return _localeNames
-        .firstWhereOrNull((locale) => locale.localeId.contains(currentLang.toUpperCase()));
+    return _localeNames.firstWhereOrNull(
+        (locale) => locale.localeId.contains(currentLang.toUpperCase()));
   }
 
   /// Manually stop the active speech recognition session
@@ -98,14 +99,20 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   @override
   Widget build(BuildContext context) {
     print('Built STT widget');
-    Widget micIcon =
+
+    final isGoogleCloud = true;
+
+    final micIcon =
         _isListening ? const Icon(Icons.mic) : const Icon(Icons.mic_off);
+    final child = isGoogleCloud
+        ? TextToSpeechCloud(child: micIcon)
+        : TextToSpeechLocal(child: micIcon);
     return FloatingActionButton(
         onPressed: () {
           print(_isListening);
           _isListening ? _stopListening() : _startListening();
         },
         tooltip: _isListening ? 'Pause' : 'Play',
-        child: TextToSpeech(child: micIcon, key: Key(_isListening.toString())));
+        child: child);
   }
 }

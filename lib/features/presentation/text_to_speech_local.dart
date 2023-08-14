@@ -5,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:interacting_tom/features/providers/animation_state_controller.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
+import 'package:just_audio/just_audio.dart';
 
-class TextToSpeech extends ConsumerStatefulWidget {
-  const TextToSpeech({super.key, this.child});
+class TextToSpeechLocal extends ConsumerStatefulWidget {
+  const TextToSpeechLocal({super.key, this.child});
   final Widget? child;
 
   @override
@@ -16,7 +17,7 @@ class TextToSpeech extends ConsumerStatefulWidget {
 
 enum TtsState { playing, stopped, paused, continued }
 
-class _TextToSpeechState extends ConsumerState<TextToSpeech> {
+class _TextToSpeechState extends ConsumerState<TextToSpeechLocal> {
   late FlutterTts flutterTts;
   String? language;
   String? engine;
@@ -25,6 +26,7 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
   double rate = 0.5;
   bool isCurrentLanguageInstalled = false;
   TtsState ttsState = TtsState.stopped;
+  final player = AudioPlayer();
 
   bool get isAndroid => !kIsWeb && Platform.isAndroid;
 
@@ -33,6 +35,7 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
     super.initState();
     initTts();
   }
+
   Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
 
   Future<dynamic> _getEngines() async => await flutterTts.getEngines;
@@ -133,16 +136,16 @@ class _TextToSpeechState extends ConsumerState<TextToSpeech> {
   Future _speak(String textToSpeak) async {
     final String currentLang =
         ref.read(animationStateControllerProvider).language;
-    
+
     final mapCurLang = currentLang == 'en' ? 'en-US' : 'ja-JP';
-    
+
     // _getLanguages().then((value) => print("languages: $value"));
     // _getVoices().then((values) => print("voices: ${values}"));
 
     final languages = await flutterTts.getLanguages;
     final voices = await flutterTts.getVoices;
-    final curVoice = voices.firstWhere((i) => i['locale'].contains(mapCurLang) as bool);
-
+    final curVoice =
+        voices.firstWhere((i) => i['locale'].contains(mapCurLang) as bool);
 
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
