@@ -17,16 +17,20 @@ class TextToSpeechAPI {
 
   TextToSpeechAPI._internal();
 
-  Future<Uint8List> synthesizeText(
-      String text, String lang) async {
+  Future<Uint8List> synthesizeText(String text, String lang) async {
     try {
       final languageCode = lang == "en" ? "en-US" : "ja-JP";
-      final name = lang == "en" ? "en-US-Neural2-J" : "ja-JP-Neural2-C";
+      final name = lang == "en" ? "en-US-Neural2-J" : "ja-JP-Neural2-D";
       final uri = Uri.https(_apiURL, '/v1beta1/text:synthesize');
       final Map json = {
         'input': {'text': text},
         'voice': {'name': name, 'languageCode': languageCode},
-        'audioConfig': {'audioEncoding': 'MP3'}
+        'audioConfig': {
+          'audioEncoding': 'MP3',
+          "effectsProfileId": ["telephony-class-application"],
+          "pitch": 6.4,
+          "speakingRate": 1
+        }
       };
 
       final jsonResponse = await _postJson(uri, json);
