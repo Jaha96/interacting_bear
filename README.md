@@ -25,7 +25,7 @@ To run the project, follow these steps:
 3. Navigate to the project directory in your terminal.
 4. Run `flutter pub get` to install the required dependencies.
 5. Replace `.env.example` filename into `.env` and update your OpenAI API, Google Cloud API credentials 
-6. To generate Riverpod, .ENV codes, run `flutter pub run build_runner watch -d`.
+6. To generate Riverpod, .ENV codes, run `dart run build_runner watch -d`.
 
 To generate launcher icons
 ```flutter pub run flutter_launcher_icons```
