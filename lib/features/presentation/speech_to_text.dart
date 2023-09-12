@@ -4,6 +4,7 @@ import 'package:interacting_tom/features/presentation/text_to_speech_cloud.dart'
 import 'package:interacting_tom/features/presentation/text_to_speech_local.dart';
 import 'package:interacting_tom/features/providers/openai_response_controller.dart';
 import 'package:interacting_tom/features/providers/animation_state_controller.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:collection/collection.dart';
@@ -26,11 +27,25 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
     _initSpeech();
   }
 
+  void errorListener(SpeechRecognitionError error) {
+    print(
+        'Received error status: $error, listening: ${_speechToText.isListening}');
+    ref.read(animationStateControllerProvider.notifier).updateHearing(false);
+  }
+
+  void statusListener(String status) {
+    if (status == 'done') {
+      ref.read(animationStateControllerProvider.notifier).updateHearing(false);
+    }
+    print(
+        'Received listener status: $status, listening: ${_speechToText.isListening}');
+  }
+
   /// This has to happen only once per app
   void _initSpeech() async {
-    await _speechToText.initialize();
+    await _speechToText.initialize(
+        onError: errorListener, onStatus: statusListener);
     _localeNames = await _speechToText.locales();
-    setState(() {});
   }
 
   /// Each time to start a speech recognition session
@@ -39,25 +54,24 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
       print('Already listening');
       return;
     }
-    updateHearingAnimation(true);
-    final localeid = _getCurrentLocale();
-    if (localeid == null) {
-      await _speechToText.listen(onResult: _onSpeechResult);
-    } else {
-      await _speechToText.listen(
-          onResult: _onSpeechResult, localeId: localeid.localeId);
-    }
+    ref.read(animationStateControllerProvider.notifier).updateHearing(true);
+    final localeId = _getCurrentLocale();
+    await _speechToText.listen(onResult: _onSpeechResult, localeId: localeId);
 
     setState(() {});
   }
 
-  LocaleName? _getCurrentLocale() {
+  String _getCurrentLocale() {
     final String currentLang =
         ref.read(animationStateControllerProvider).language;
 
-    if (_localeNames.isEmpty) return null;
-    return _localeNames.firstWhereOrNull(
+    final locale = _localeNames.firstWhereOrNull(
         (locale) => locale.localeId.contains(currentLang.toUpperCase()));
+    if (locale == null || _localeNames.isEmpty) {
+      return currentLang == 'en' ? 'en-US' : 'ja-JP';
+    } else {
+      return locale.localeId;
+    }
   }
 
   /// Manually stop the active speech recognition session
@@ -66,7 +80,7 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
   /// listen method.
   void _stopListening() async {
     await _speechToText.stop();
-    updateHearingAnimation(false);
+    ref.read(animationStateControllerProvider.notifier).updateHearing(false);
     setState(() {});
   }
 
@@ -88,28 +102,20 @@ class _STTWidgetState extends ConsumerState<STTWidget> {
     }
   }
 
-  void updateHearingAnimation(bool isHearing) {
-    ref
-        .read(animationStateControllerProvider.notifier)
-        .updateHearing(isHearing);
-  }
-
   bool get _isListening => _speechToText.isListening;
 
   @override
   Widget build(BuildContext context) {
     print('Built STT widget');
-
-    final isGoogleCloud = true;
+    print("IS LISTENING: $_isListening");
 
     final micIcon =
         _isListening ? const Icon(Icons.mic) : const Icon(Icons.mic_off);
-    final child = isGoogleCloud
-        ? TextToSpeechCloud(child: micIcon)
-        : TextToSpeechLocal(child: micIcon);
+    final child = TextToSpeechCloud(child: micIcon);
+    // final child = TextToSpeechLocal(child: micIcon);
     return FloatingActionButton(
         onPressed: () {
-          print(_isListening);
+          print("IS LISTENING: $_isListening");
           _isListening ? _stopListening() : _startListening();
         },
         tooltip: _isListening ? 'Pause' : 'Play',

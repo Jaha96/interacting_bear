@@ -23,7 +23,7 @@ class AnimationStateController extends _$AnimationStateController {
   }
 
   void updateTalking(bool isTalking) {
-    state = AnimationState(isTalking: isTalking, language: state.language);
+    state = AnimationState(isTalking: isTalking, language: state.language, isHearing: state.isHearing);
   }
 
   void toggleLanguage() {

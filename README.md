@@ -27,6 +27,10 @@ To run the project, follow these steps:
 5. Replace `.env.example` filename into `.env` and update your OpenAI API, Google Cloud API credentials 
 6. To generate Riverpod, .ENV codes, run `flutter pub run build_runner watch -d`.
 
+To generate launcher icons
+```flutter pub run flutter_launcher_icons```
+
+
 ## Features
 
 - Cute and interactive polar bear character with various animations like hearing, waving, and talking.

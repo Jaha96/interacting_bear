@@ -47,6 +47,7 @@ class _AnimationScreenState extends ConsumerState<AnimationScreen> {
   }
 
   void _toggleAnimation(AnimationState newValue) {
+    print('toggle animation, is hearing: ${newValue.isHearing}');
     isHearing?.value = newValue.isHearing;
     talk?.value = newValue.isTalking;
   }
@@ -55,6 +56,7 @@ class _AnimationScreenState extends ConsumerState<AnimationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final animState = ref.watch(animationStateControllerProvider);
     print('Built animation screen');
     _toggleAnimation(animState);
