@@ -2,6 +2,9 @@
 
 Welcome to the Talking Bear Flutter app! This project aims to recreate the delightful experience of the talking Tom game from our childhood using the latest technologies available to us. The app utilizes [Rive](https://rive.app/) for animations, Riverpod for state management, [Google Cloud Text-to-Speech AI](https://cloud.google.com/text-to-speech) for text-to-speech and device's built in speech-to-text functionalities, and [Chat GPT API](https://platform.openai.com/docs/api-reference/chat) for generating interesting and random responses. The primary goal is to create an interactive and cute application that listens, interacts, and generates exciting results for kids.
 
+## Demo
+https://github.com/Jaha96/interacting_bear/assets/18748558/47503d50-ed7e-4050-99f8-1fc9bee3d3e0
+
 ## Story
 
 As a kid, I enjoyed playing the talking Tom game, which was cute and interactive. Now, inspired by this idea, I wanted to build a similar app using the most up-to-date technologies. Initially, I considered developing a 3D game using Unity. My chosen stack included Unity for the mobile app, Blender for creating character animations, and Mixamo for finding characters and animations. However, I soon realized that this combination was challenging for first-time users.
