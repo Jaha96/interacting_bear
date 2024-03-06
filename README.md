@@ -30,7 +30,7 @@ To run the project, follow these steps:
     ```
 3. Clone project and navigate to the project directory in your terminal. 
     ```bash
-    git clone
+    git clone https://github.com/Jaha96/interacting_bear.git
     cd interacting_bear
     ```
 4. Install required dependencies.
