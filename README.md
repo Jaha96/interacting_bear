@@ -6,6 +6,7 @@ Welcome to the Talking Bear Flutter app! This project aims to recreate the delig
 Showcase some use cases and interactions of the application, highlighting the engaging and unpredictable responses from the polar bear character.
 - [Rive animation](https://rive.app/community/5628-11215-wave-hear-and-talk) used in this project.
 - App demo usage Video:
+
 https://github.com/Jaha96/interacting_bear/assets/18748558/47503d50-ed7e-4050-99f8-1fc9bee3d3e0
 
 ## Requirements
