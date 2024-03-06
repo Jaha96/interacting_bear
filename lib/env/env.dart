@@ -3,7 +3,7 @@ import 'package:envied/envied.dart';
 
 part 'env.g.dart';
 
-@Envied(path: ".env")
+@Envied()
 abstract class Env {
   @EnviedField(
       varName: 'OPEN_AI_API_KEY', obfuscate: true) // the .env variable.
@@ -11,7 +11,7 @@ abstract class Env {
 
   @EnviedField(
       varName: 'OPEN_AI_ORG_ID', defaultValue: '') // the .env variable.
-  static const String organization = _Env.organization;
+  static final String organization = _Env.organization;
 
   @EnviedField(
       varName: 'GOOGLE_CLOUD_API_KEY', obfuscate: true) // the .env variable.
